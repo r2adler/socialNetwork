@@ -1,5 +1,5 @@
 {
-  "name": "samuray_way_functionalReact_reduxToolkit",
+  "name": "samuray_way_functional_react_redux_toolkit",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -15,7 +15,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.5",
-    "react-router-dom": "^6.10.0",
+    "react-router-dom": "^6.14.2",
     "react-scripts": "5.0.1",
     "typescript": "^4.4.2",
     "web-vitals": "^2.1.0"
@@ -43,5 +43,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/react-router-dom": "^5.3.3"
   }
 }

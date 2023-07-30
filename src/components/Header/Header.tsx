@@ -1,19 +1,20 @@
 import React, {useEffect} from 'react';
 import s from './Header.module.css'
-import {NavLink} from 'react-router-dom';
-import {useSelector} from 'react-redux';
+import {NavLink, } from 'react-router-dom';
 import {getAuthUserDataTC} from '../../redux/auth-reducer';
-import {AppRootStateType} from '../../redux/store';
+import {useAppDispatch, useAppSelector} from '../../redux/store';
 
 
 const Header = () => {
-    const isAuth = useSelector<AppRootStateType, boolean>((state) => state.auth.isAuth)
-    const login = useSelector<AppRootStateType, any>((state) => state.auth.login)
+    const isAuth = useAppSelector<boolean>((state) => state.auth.isAuth)
+    const login = useAppSelector<string | null>((state) => state.auth.login)
+    const dispatch = useAppDispatch()
 
 
     useEffect(() => {
-        getAuthUserDataTC()
+        dispatch(getAuthUserDataTC())
     }, []);
+
 
     return (
         <header className={'header'}>
@@ -30,5 +31,6 @@ const Header = () => {
         </header>
     )
 }
+
 
 export default Header

@@ -1,25 +1,24 @@
 import React, {ChangeEvent} from 'react';
 import Post from './Post/Post';
 import {FC} from 'react';
-import {PostsType} from '../../../redux/profile-reducer';
+import {addPostAC, InitialStateType, updateNewPostTextAC} from '../../../redux/profile-reducer';
+import {useAppDispatch, useAppSelector} from '../../../redux/store';
 
 
-interface MyPostsProps {
-    posts: PostsType[]
-    newPostText: string
-    updateNewPost: (text: string) => void
-    addPost: () => void
-}
 
 
-const MyPosts: FC<MyPostsProps> = (props) => {
+export const MyPosts: FC = () => {
+    const dispatch = useAppDispatch()
+    const {posts, newPostText} = useAppSelector<InitialStateType>(state => state.profilePage)
+
     let onAddPost = () => {
-        props.addPost()
+        dispatch(addPostAC())
     }
 
     const onPostChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-        props.updateNewPost(e.currentTarget.value)
+        dispatch(updateNewPostTextAC(e.currentTarget.value))
     }
+
 
     return (
         <div>
@@ -29,7 +28,7 @@ const MyPosts: FC<MyPostsProps> = (props) => {
                     <div>
                         <textarea
                             onChange={onPostChange}
-                            value={props.newPostText}
+                            value={newPostText}
                         />
                     </div>
                     <div>
@@ -39,11 +38,11 @@ const MyPosts: FC<MyPostsProps> = (props) => {
             </div>
             <div className={'posts'}>
                 {
-                    props.posts.map(obj => <Post message={obj.message} likesCount={obj.likesCount} key={obj.id}/>)
+                    posts.map(obj => <Post message={obj.message} likesCount={obj.likesCount} key={obj.id}/>)
                 }
             </div>
         </div>
     )
 }
 
-export default MyPosts
+

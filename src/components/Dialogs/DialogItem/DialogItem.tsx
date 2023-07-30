@@ -10,15 +10,16 @@ interface DialogItemProps {
 
 const DialogItem: FC<DialogItemProps> = (props) => {
 
+
     return (
-        <nav>
+        <div>
             <NavLink
                 to={`/dialogs/${props.id}`}
-                className={({isActive}) => isActive ? s.activeLink : ''}
+                className={({isActive}) => isActive ? s.activeLink : undefined}
             >
                 {props.name}
             </NavLink>
-        </nav>
+        </div>
     )
 }
 

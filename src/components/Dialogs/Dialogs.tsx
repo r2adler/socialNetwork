@@ -1,33 +1,38 @@
 import s from './Dialogs.module.css'
 import DialogItem from './DialogItem/DialogItem'
 import Message from './Message/Message'
-import {ChangeEvent, FC} from 'react'
+import React, {ChangeEvent, FC} from 'react'
 import {
-    DialogType,
-    MessageType,
+    InitialStateType,
     sendMessageAC,
     updateNewMessageBodyCreator
 } from '../../redux/dialogs-reducer';
-import {useSelector} from 'react-redux';
-import {AppRootStateType} from '../../redux/store';
+import {useAppDispatch, useAppSelector} from '../../redux/store';
+import {Navigate} from 'react-router-dom';
 
 
 const Dialogs: FC = () => {
-    const dialogs = useSelector<AppRootStateType, Array<DialogType>>(state => state.dialogsPage.dialogs);
-    const messages = useSelector<AppRootStateType, Array<MessageType>>(state => state.dialogsPage.messages);
-    const newMessageBody = useSelector<AppRootStateType, string>(state => state.dialogsPage.newMessageBody);
+    const dispatch = useAppDispatch()
+    const isAuth = useAppSelector<boolean>((state) => state.auth.isAuth)
+    const {messages, newMessageBody, dialogs} = useAppSelector<InitialStateType>(state => state.dialogsPage);
+
 
     const dialogsElements = dialogs.map(obj => <DialogItem name={obj.name} id={obj.id} key={obj.id}/>)
     const messageElements = messages.map(obj => <Message message={obj.message} key={obj.id}/>)
 
     const onSendMessageClick = () => {
-        sendMessageAC()
+        dispatch(sendMessageAC())
     }
 
     const onNewMessageChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
         const body = e.target.value
-        updateNewMessageBodyCreator(body)
+        dispatch(updateNewMessageBodyCreator(body))
     }
+
+    if (!isAuth) {
+        return <Navigate to={'/login'}/>
+    }
+
 
     return (
         <div className={s.dialogs}>
