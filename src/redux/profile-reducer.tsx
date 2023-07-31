@@ -121,7 +121,6 @@ export const updateUserStatusTC = (status: string): AppThunk => (dispatch: Dispa
             if (response.data.resultCode === 0) {
                 dispatch(setUserStatusAC(status))
             }
-
         })
 }
 
