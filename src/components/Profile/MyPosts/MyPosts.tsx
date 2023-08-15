@@ -1,9 +1,9 @@
 import React from 'react';
 import Post from './Post/Post';
 import {FC} from 'react';
-import {addPostAC, PostsType} from '../../../redux/profile-reducer';
-import {useAppDispatch, useAppSelector} from '../../../redux/store';
+import {useAppDispatch, useAppSelector} from 'redux/store';
 import {useFormik} from 'formik';
+import {addPostAC, PostsType} from 'redux/profile-reducer';
 
 
 
@@ -27,12 +27,23 @@ export const MyPosts: FC = () => {
     )
 }
 
-
+type FormikErrorType = {
+    newPostText?: string
+}
 export const MyPostsForm = () => {
     const dispatch = useAppDispatch()
     const formik = useFormik({
         initialValues: {
             newPostText: '',
+        },
+        validate: (values) => {
+            const errors: FormikErrorType = {}
+            if (!values.newPostText) {
+                errors.newPostText = 'Required'
+            } else if (values.newPostText.length > 10) {
+                errors.newPostText = 'The post should be less than 10 symbols'
+            }
+            return errors
         },
         onSubmit: values => {
             formik.resetForm()
@@ -43,7 +54,9 @@ export const MyPostsForm = () => {
     return (
         <form onSubmit={formik.handleSubmit}>
             <div>
-                <input type="textarea" placeholder={'enter your message'} {...formik.getFieldProps('newPostText')}/>
+                <textarea placeholder={'enter your message'} {...formik.getFieldProps('newPostText')}/>
+                {formik.errors.newPostText && formik.touched.newPostText ?
+                    <div style={{color: 'red'}}>{formik.errors.newPostText}</div> : null}
             </div>
             <div>
                 <button type={'submit'}>Add post</button>
