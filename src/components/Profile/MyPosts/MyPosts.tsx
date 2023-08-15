@@ -1,40 +1,22 @@
-import React, {ChangeEvent} from 'react';
+import React from 'react';
 import Post from './Post/Post';
 import {FC} from 'react';
-import {addPostAC, InitialStateType, updateNewPostTextAC} from '../../../redux/profile-reducer';
+import {addPostAC, PostsType} from '../../../redux/profile-reducer';
 import {useAppDispatch, useAppSelector} from '../../../redux/store';
+import {useFormik} from 'formik';
+
 
 
 
 
 export const MyPosts: FC = () => {
-    const dispatch = useAppDispatch()
-    const {posts, newPostText} = useAppSelector<InitialStateType>(state => state.profilePage)
-
-    let onAddPost = () => {
-        dispatch(addPostAC())
-    }
-
-    const onPostChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-        dispatch(updateNewPostTextAC(e.currentTarget.value))
-    }
-
+    const posts = useAppSelector<Array<PostsType>>(state => state.profilePage.posts)
 
     return (
         <div>
             <div style={{padding: '10px'}}>
                 <h3>My posts</h3>
-                <div>
-                    <div>
-                        <textarea
-                            onChange={onPostChange}
-                            value={newPostText}
-                        />
-                    </div>
-                    <div>
-                        <button onClick={onAddPost}>Add post</button>
-                    </div>
-                </div>
+                <MyPostsForm/>
             </div>
             <div className={'posts'}>
                 {
@@ -45,4 +27,28 @@ export const MyPosts: FC = () => {
     )
 }
 
+
+export const MyPostsForm = () => {
+    const dispatch = useAppDispatch()
+    const formik = useFormik({
+        initialValues: {
+            newPostText: '',
+        },
+        onSubmit: values => {
+            formik.resetForm()
+            dispatch(addPostAC(values.newPostText))
+        },
+    });
+
+    return (
+        <form onSubmit={formik.handleSubmit}>
+            <div>
+                <input type="textarea" placeholder={'enter your message'} {...formik.getFieldProps('newPostText')}/>
+            </div>
+            <div>
+                <button type={'submit'}>Add post</button>
+            </div>
+        </form>
+    )
+}
 

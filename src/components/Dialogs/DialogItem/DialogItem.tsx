@@ -10,7 +10,6 @@ interface DialogItemProps {
 
 const DialogItem: FC<DialogItemProps> = (props) => {
 
-
     return (
         <div>
             <NavLink

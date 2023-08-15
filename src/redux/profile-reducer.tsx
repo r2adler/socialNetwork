@@ -9,9 +9,7 @@ export type PostsType = {
 }
 export type setUserProfileType = ReturnType<typeof setUserProfileAC>
 export type addPost = ReturnType<typeof addPostAC>
-export type updateNewPostText = ReturnType<typeof updateNewPostTextAC>
 export type  ProfileActionsType = addPost
-    | updateNewPostText
     | setUserProfileType
     | ReturnType<typeof setUserStatusAC>
 
@@ -60,18 +58,12 @@ const profileReducer = (state: InitialStateType = initialState, action: ProfileA
         case 'ADD-POST':
             let newPost: PostsType = {
                 id: 5,
-                message: state.newPostText,
+                message: action.newPostText,
                 likesCount: 0
             }
             return {
                 ...state,
                 posts: [...state.posts, newPost],
-                newPostText: ''
-            }
-        case 'UPDATE-NEW-POST-TEXT':
-            return {
-                ...state,
-                newPostText: action.newText
             }
         case 'SET_USERS_PROFILE':
             return {
@@ -89,12 +81,10 @@ const profileReducer = (state: InitialStateType = initialState, action: ProfileA
 }
 
 
-export const addPostAC = () => {
-    return {type: 'ADD-POST'} as const
+export const addPostAC = (newPostText: string) => {
+    return {type: 'ADD-POST', newPostText} as const
 }
-export const updateNewPostTextAC = (newText: string) => {
-    return {type: 'UPDATE-NEW-POST-TEXT', newText} as const
-}
+
 export const setUserProfileAC = (profile: ProfileType | null) => {
     return {type: 'SET_USERS_PROFILE', profile} as const
 }
