@@ -1,7 +1,15 @@
 import React, {FC} from 'react';
 import {useFormik} from 'formik';
+import {useAppDispatch, useAppSelector} from 'redux/store';
+import {logInTC} from 'redux/auth-reducer';
+import {Navigate} from 'react-router-dom';
+
 
 export const Login: FC = () => {
+    const isAuth = useAppSelector<boolean>(state => state.auth.isAuth)
+    if (isAuth) {
+        return <Navigate to={'/profile'}/>
+    }
     return (
         <>
             <h1>Login</h1>
@@ -11,23 +19,24 @@ export const Login: FC = () => {
 };
 
 type FormikErrorType = {
-    login?: string
+    email?: string
     password?: string
     rememberMe?: boolean
 }
 export const LoginForm = () => {
+    const dispatch = useAppDispatch()
     const formik = useFormik({
         initialValues: {
             password: '',
-            login: '',
+            email: '',
             rememberMe: false
         },
         validate: (values) => {
             const errors: FormikErrorType = {}
             if (!values.password) {
-                errors.login = 'Required'
-            } else if (values.login.length <= 3) {
-                errors.login = 'Login should be more than 3 symbols'
+                errors.email = 'Required'
+            } else if (values.email.length <= 3) {
+                errors.email = 'Login should be more than 3 symbols'
             }
 
             if (!values.password) {
@@ -38,9 +47,9 @@ export const LoginForm = () => {
             return errors
         },
         onSubmit: values => {
-            alert(JSON.stringify(values, null, 2))
+            // alert(JSON.stringify(values, null, 2))
             formik.resetForm()
-            // dispatch(loginTC(values))
+            dispatch(logInTC(values.email, values.password, values.rememberMe))
         },
     });
 
@@ -48,9 +57,9 @@ export const LoginForm = () => {
     return (
         <form onSubmit={formik.handleSubmit}>
             <div>
-                <input type="text" placeholder={'Login'} {...formik.getFieldProps('login')}/>
-                {formik.errors.login && formik.touched.login ?
-                    <div style={{color: 'red'}}>{formik.errors.login}</div> : null}
+                <input type="text" placeholder={'Email'} {...formik.getFieldProps('email')}/>
+                {formik.errors.email && formik.touched.email ?
+                    <div style={{color: 'red'}}>{formik.errors.email}</div> : null}
             </div>
             <div>
                 <input type="text" placeholder={'Password'} {...formik.getFieldProps('password')}/>

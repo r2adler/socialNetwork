@@ -43,12 +43,28 @@ export const profileAPI = {
 
 export const authAPI = {
     me() {
-        return instance.get('auth/me')
+        return instance.get<ResponseType<GetResponseType>>('auth/me')
+    },
+    logIn(email: string, password: string, rememberMe: boolean) {
+        return instance.post<ResponseType<{userId: number}>, AxiosResponse<ResponseType<{userId: number}>>, LoginType>('/auth/login', {email, password, rememberMe})
+    },
+    logOut() {
+        return instance.delete<ResponseType>('/auth/login')
     }
 }
-
-type ResponseType = {
-    data: {}
+type LoginType = {
+    email: string
+    password: string
+    rememberMe: boolean
+    captcha?: boolean
+}
+type GetResponseType = {
+    id: number
+    email: string
+    login: string
+}
+type ResponseType<T = {}> = {
+    data: T
     fieldsErrors: []
     messages: Array<string>
     resultCode: number

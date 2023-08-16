@@ -1,6 +1,7 @@
-import {authAPI} from '../api/api';
+import {authAPI} from 'api/api';
 import {Dispatch} from 'redux';
 import {AppThunk} from './store';
+
 
 export type InitialStateType = {
     userId: number | null
@@ -20,7 +21,7 @@ const initialState: InitialStateType = {
 const authReducer = (state: InitialStateType = initialState, action: AuthActionsType): InitialStateType => {
     switch (action.type) {
         case 'SET_USER_DATA':
-            return {...state, ...action.data, isAuth: true}
+            return {...state, ...action.data}
         default:
             return state
     }
@@ -28,23 +29,43 @@ const authReducer = (state: InitialStateType = initialState, action: AuthActions
 
 
 
-export const setAuthUserData = (userId: number | null, email: string | null, login: string | null) => {
-    return {type: 'SET_USER_DATA', data: {userId, email, login}}
+export const setAuthUserData = (userId: number | null, email: string | null, login: string | null, isAuth: boolean) => {
+    return {type: 'SET_USER_DATA', data: {userId, email, login, isAuth}}
 }
 
 
 
 export const getAuthUserDataTC = (): AppThunk => (dispatch: Dispatch<AuthActionsType>) => {
-
     authAPI.me()
         .then(response => {
             if (response.data.resultCode === 0) {
-                const {userId, login, email} = response.data.data
-
-                dispatch(setAuthUserData(userId, email, login))
+                const {id, login, email} = response.data.data
+                dispatch(setAuthUserData(id, email, login, true))
             }
         })
 }
+export const logInTC = (email: string, password: string, rememberMe: boolean = false): AppThunk =>
+    (dispatch: Dispatch<any>) => {
+        authAPI.logIn(email, password, rememberMe)
+            .then(response => {
+                if (response.data.resultCode === 0) {
+                    dispatch(getAuthUserDataTC())
+                }
+            })
+    }
+
+export const logOutTC = (): AppThunk =>
+
+    (dispatch: Dispatch<any>) => {
+        console.log('logOutTC')
+        authAPI.logOut()
+            .then(response => {
+                if (response.data.resultCode === 0) {
+                    dispatch(setAuthUserData(null, null, null, false))
+                }
+            })
+    }
+
 
 type AuthActionsType = ReturnType<typeof setAuthUserData>
 
