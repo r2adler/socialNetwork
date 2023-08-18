@@ -1,18 +1,20 @@
 import React, {FC, useEffect} from 'react';
 import {Preloader} from '../../common/Preloader/Preloader';
-import {useAppDispatch, useAppSelector} from '../../../redux/store';
-import {getUserProfileTC, getUserStatusTC, ProfileType} from '../../../redux/profile-reducer';
+import {useAppDispatch, useAppSelector} from 'redux/store';
+import {getUserProfileTC, getUserStatusTC, ProfileType} from 'redux/profile-reducer';
 import {ProfileStatus} from './ProfileStatus';
 import {useParams} from 'react-router-dom';
 
 
 const ProfileInfo: FC = () => {
     const profile = useAppSelector<ProfileType | null>(state => state.profilePage.profile);
+    const authorizedUserId = useAppSelector(state => state.auth.userId)
     const dispatch = useAppDispatch()
 
-    let {userId} = useParams<{userId: any}>();
+
+    let {userId} = useParams<{ userId: any }>();
     if (!userId) {
-        userId = 2
+        userId = authorizedUserId
     }
 
     useEffect(() => {
@@ -54,7 +56,6 @@ const ProfileInfo: FC = () => {
         </div>
     )
 }
-
 
 
 export default ProfileInfo

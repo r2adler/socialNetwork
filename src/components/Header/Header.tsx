@@ -1,7 +1,7 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import s from './Header.module.css'
-import {NavLink, } from 'react-router-dom';
-import {getAuthUserDataTC, logOutTC} from 'redux/auth-reducer';
+import {NavLink} from 'react-router-dom';
+import {logOutTC} from 'redux/auth-reducer';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 
 
@@ -9,12 +9,6 @@ const Header = () => {
     const isAuth = useAppSelector<boolean>((state) => state.auth.isAuth)
     const login = useAppSelector<string | null>((state) => state.auth.login)
     const dispatch = useAppDispatch()
-
-
-    useEffect(() => {
-        dispatch(getAuthUserDataTC())
-    }, []);
-
 
     return (
         <header className={'header'}>
@@ -25,7 +19,7 @@ const Header = () => {
                 {
                     isAuth ?
                         <div>{login} - <button onClick={() => dispatch(logOutTC())}>Log out</button></div> :
-                        <NavLink to='/login'>Login</NavLink>
+                        <NavLink to="/login">Login</NavLink>
                 }
             </div>
         </header>

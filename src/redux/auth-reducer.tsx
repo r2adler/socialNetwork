@@ -2,14 +2,12 @@ import {authAPI} from 'api/api';
 import {Dispatch} from 'redux';
 import {AppThunk} from './store';
 
-
 export type InitialStateType = {
     userId: number | null
     email: string | null
     login: string | null
     isAuth: boolean
 }
-
 
 const initialState: InitialStateType = {
     userId: null,
@@ -35,8 +33,8 @@ export const setAuthUserData = (userId: number | null, email: string | null, log
 
 
 
-export const getAuthUserDataTC = (): AppThunk => (dispatch: Dispatch<AuthActionsType>) => {
-    authAPI.me()
+export const getAuthUserDataTC = (): any => (dispatch: Dispatch<AuthActionsType>) => {
+    return authAPI.me()
         .then(response => {
             if (response.data.resultCode === 0) {
                 const {id, login, email} = response.data.data
@@ -50,6 +48,9 @@ export const logInTC = (email: string, password: string, rememberMe: boolean = f
             .then(response => {
                 if (response.data.resultCode === 0) {
                     dispatch(getAuthUserDataTC())
+                } else {
+                    const message = response.data.messages.length > 0 ? response.data.messages[0] : 'Some error'
+                    // dispatch(stopSubmit('login', {_error: message}))
                 }
             })
     }

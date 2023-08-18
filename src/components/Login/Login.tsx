@@ -71,6 +71,9 @@ export const LoginForm = () => {
                 <input type={'checkbox'} {...formik.getFieldProps('rememberMe')} checked={formik.values.rememberMe}/>
                 remember me
             </div>
+            {/*<div style={{display:'inline-block', border: 'red 1px solid', padding: '5px', color: 'red'}}>*/}
+            {/*    error*/}
+            {/*</div>*/}
             <div>
                 <button type={'submit'}>Login</button>
             </div>
