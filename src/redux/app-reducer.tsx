@@ -1,39 +1,36 @@
 import {Dispatch} from 'redux';
 import {getAuthUserDataTC} from 'redux/auth-reducer';
 import {AppThunk} from 'redux/store';
+import {createSlice} from '@reduxjs/toolkit';
 
 
-const initialState = {
-    initialized: false,
-}
-
-export const appReducer = (state: AppReducerInitialStateType = initialState, action: AuthActionsType): AppReducerInitialStateType => {
-    switch (action.type) {
-        case 'INITIALIZED':
-            return {...state, initialized: true}
-        default:
-            return state
+const slice = createSlice({
+    name: 'dialogs',
+    initialState: {
+        initialized: false,
+    } as AppInitialStateType,
+    reducers: {
+        setAuthUserData: (state) => {
+            state.initialized = true
+        }
     }
-}
+})
 
 
-//actions
-export const setInitializedAC = () => {
-    return {type: 'INITIALIZED'}
-}
+export const appReducer = slice.reducer
+export const appActions = slice.actions
 
 
 //thunks
 export const initializeTC = (): AppThunk => (dispatch: Dispatch<any>) => {
     const promise = dispatch(getAuthUserDataTC())
     promise.then(() => {
-        dispatch(setInitializedAC())
+        dispatch(appActions.setAuthUserData())
     })
 }
 
 
 //types
-type AuthActionsType = ReturnType<typeof setInitializedAC>
-export type AppReducerInitialStateType = {
+export type AppInitialStateType = {
     initialized: boolean
 }

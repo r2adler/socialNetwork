@@ -4,11 +4,11 @@ import styles from './users.module.css';
 import {useSelector} from 'react-redux';
 import {
     followTC,
-    getUsersTC, onPageChangeTC,
+    requestUsersTC, onPageChangeTC,
     unfollowTC,
     UserType
-} from '../../redux/users-reducer';
-import {AppRootStateType, useAppDispatch} from '../../redux/store';
+} from 'redux/users-reducer';
+import {AppRootStateType, useAppDispatch} from 'redux/store';
 import {NavLink} from 'react-router-dom';
 
 
@@ -23,7 +23,7 @@ export const Users = () => {
 
 
     useEffect(() => {
-        dispatch(getUsersTC(currentPage, pageSize))
+        dispatch(requestUsersTC(currentPage, pageSize))
     }, []);
 
     const onPageChanged = (pageNumber: number) => {

@@ -1,47 +1,39 @@
 import {authAPI} from 'api/api';
 import {Dispatch} from 'redux';
 import {AppThunk} from './store';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 
-export type InitialStateType = {
-    userId: number | null
-    email: string | null
-    login: string | null
-    isAuth: boolean
-}
 
-const initialState: InitialStateType = {
-    userId: null,
-    email: null,
-    login: null,
-    isAuth: false
-}
-
-const authReducer = (state: InitialStateType = initialState, action: AuthActionsType): InitialStateType => {
-    switch (action.type) {
-        case 'SET_USER_DATA':
-            return {...state, ...action.data}
-        default:
-            return state
+const slice = createSlice({
+    name: 'dialogs',
+    initialState: {
+        userId: null,
+        email: null,
+        login: null,
+        isAuth: false
+    } as AuthInitialStateType,
+    reducers: {
+        setAuthUserData: (state, action: PayloadAction<{ userId: number | null, email: string | null, login: string | null, isAuth: boolean }>) => {
+            return {...state, ...action.payload}
+        }
     }
-}
+})
 
 
-
-export const setAuthUserData = (userId: number | null, email: string | null, login: string | null, isAuth: boolean) => {
-    return {type: 'SET_USER_DATA', data: {userId, email, login, isAuth}}
-}
+export const authReducer = slice.reducer
+export const authActions = slice.actions
 
 
-
-export const getAuthUserDataTC = (): any => (dispatch: Dispatch<AuthActionsType>) => {
+export const getAuthUserDataTC = (): any => (dispatch: Dispatch<any>) => {
     return authAPI.me()
         .then(response => {
             if (response.data.resultCode === 0) {
                 const {id, login, email} = response.data.data
-                dispatch(setAuthUserData(id, email, login, true))
+                dispatch(authActions.setAuthUserData({userId: id, email, login, isAuth: true}))
             }
         })
 }
+
 export const logInTC = (email: string, password: string, rememberMe: boolean = false): AppThunk =>
     (dispatch: Dispatch<any>) => {
         authAPI.logIn(email, password, rememberMe)
@@ -62,12 +54,16 @@ export const logOutTC = (): AppThunk =>
         authAPI.logOut()
             .then(response => {
                 if (response.data.resultCode === 0) {
-                    dispatch(setAuthUserData(null, null, null, false))
+                    dispatch(authActions.setAuthUserData({userId: null, email: null, login: null, isAuth: false}))
                 }
             })
     }
 
 
-type AuthActionsType = ReturnType<typeof setAuthUserData>
+export type AuthInitialStateType = {
+    userId: number | null
+    email: string | null
+    login: string | null
+    isAuth: boolean
+}
 
-export default authReducer

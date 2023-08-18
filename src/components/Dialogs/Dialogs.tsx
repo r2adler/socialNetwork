@@ -5,7 +5,7 @@ import React, {FC} from 'react'
 import {
     DialogType,
     MessageType,
-    sendMessageAC,
+    dialogsActions,
 } from 'redux/dialogs-reducer';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import {Navigate} from 'react-router-dom';
@@ -59,7 +59,7 @@ export const AddMessageForm = () => {
         },
         onSubmit: values => {
             formik.resetForm()
-            dispatch(sendMessageAC(values.newMessageBody))
+            dispatch(dialogsActions.sendMessage({newMessageBody: values.newMessageBody}))
         },
     });
 

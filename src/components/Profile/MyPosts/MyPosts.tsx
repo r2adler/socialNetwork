@@ -3,10 +3,7 @@ import Post from './Post/Post';
 import {FC} from 'react';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import {useFormik} from 'formik';
-import {addPostAC, PostsType} from 'redux/profile-reducer';
-
-
-
+import {profileActions, PostsType} from 'redux/profile-reducer';
 
 
 export const MyPosts: FC = () => {
@@ -47,7 +44,7 @@ export const MyPostsForm = () => {
         },
         onSubmit: values => {
             formik.resetForm()
-            dispatch(addPostAC(values.newPostText))
+            dispatch(profileActions.addPost({newPostText: values.newPostText}))
         },
     });
 
