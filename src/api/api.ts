@@ -17,7 +17,7 @@ export const usersAPI = {
             })
     },
     follow(userId: number) {
-        return instance.post(`follow/${userId}`)
+        return instance.post<ResponseType>(`follow/${userId}`)
     },
     unfollow(userId: number) {
         return instance.delete(`follow/${userId}`)
@@ -46,7 +46,11 @@ export const authAPI = {
         return instance.get<ResponseType<GetResponseType>>('auth/me')
     },
     logIn(email: string, password: string, rememberMe: boolean) {
-        return instance.post<ResponseType<{userId: number}>, AxiosResponse<ResponseType<{userId: number}>>, LoginType>('/auth/login', {email, password, rememberMe})
+        return instance.post<ResponseType<{ userId: number }>, AxiosResponse<ResponseType<{ userId: number }>>, LoginType>('/auth/login', {
+            email,
+            password,
+            rememberMe
+        })
     },
     logOut() {
         return instance.delete<ResponseType>('/auth/login')

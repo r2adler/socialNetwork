@@ -66,10 +66,6 @@ const slice = createSlice({
     }
 })
 
-export const usersReducer = slice.reducer
-export const usersActions = slice.actions
-
-
 
 //thunks
 export const requestUsersTC = (page: number, pageSize: number): AppThunk => (dispatch: Dispatch<any>) => {
@@ -94,24 +90,46 @@ export const onPageChangeTC = (pageNumber: number, pageSize: number): AppThunk =
         })
 }
 
-export const followTC = (userId: number): AppThunk => (dispatch: Dispatch<any>) => {
-    dispatch(usersActions.toggleFollowingProgress({isFetching: true, userId}))
-    usersAPI.follow(userId)
-        .then(response => {
-            if (response.data.resultCode === 0) {
-                dispatch(usersActions.followSuccess({userId}))
-            }
-            dispatch(usersActions.toggleFollowingProgress({isFetching: false, userId}))
-        })
+// export const followTC = (userId: number): AppThunk => (dispatch: Dispatch<any>) => {
+//     dispatch(usersActions.toggleFollowingProgress({isFetching: true, userId}))
+//     usersAPI.follow(userId)
+//         .then(response => {
+//             if (response.data.resultCode === 0) {
+//                 dispatch(usersActions.followSuccess({userId}))
+//             }
+//             dispatch(usersActions.toggleFollowingProgress({isFetching: false, userId}))
+//         })
+// }
+//
+// export const unfollowTC = (userId: number): AppThunk => (dispatch: Dispatch<any>) => {
+//     dispatch(usersActions.toggleFollowingProgress({isFetching: true, userId}))
+//     usersAPI.unfollow(userId)
+//         .then(response => {
+//             if (response.data.resultCode === 0) {
+//                 dispatch(usersActions.unfollowSuccess({userId}))
+//             }
+//             dispatch(usersActions.toggleFollowingProgress({isFetching: false, userId}))
+//         })
+// }
+
+
+export const followTC = (userId: number): AppThunk => (dispatch: Dispatch) => {
+    followUnfollowFlow(dispatch, userId, usersAPI.follow, usersActions.followSuccess)
 }
 
-export const unfollowTC = (userId: number): AppThunk => (dispatch: Dispatch<any>) => {
-    dispatch(usersActions.toggleFollowingProgress({isFetching: true, userId}))
-    usersAPI.unfollow(userId)
-        .then(response => {
-            if (response.data.resultCode === 0) {
-                dispatch(usersActions.unfollowSuccess({userId}))
-            }
-            dispatch(usersActions.toggleFollowingProgress({isFetching: false, userId}))
-        })
+export const unfollowTC = (userId: number): AppThunk => (dispatch: Dispatch) => {
+    followUnfollowFlow(dispatch, userId, usersAPI.unfollow, usersActions.unfollowSuccess)
 }
+
+const followUnfollowFlow = async (dispatch: Dispatch, userId: number, apiMethod: (userId: number) => any, AC: (payload: { userId: number }) => any) => {
+    dispatch(usersActions.toggleFollowingProgress({isFetching: true, userId}))
+    const response = await apiMethod(userId)
+    if (response.data.resultCode === 0) {
+        dispatch(AC({userId}))
+    }
+    dispatch(usersActions.toggleFollowingProgress({isFetching: false, userId}))
+}
+
+
+export const usersReducer = slice.reducer
+export const usersActions = slice.actions

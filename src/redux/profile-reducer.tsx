@@ -28,6 +28,12 @@ const slice = createSlice({
         },
         setUserStatus: (state, action: PayloadAction<{ status: string }>) => {
             state.status = action.payload.status
+        },
+        deletePost: (state, action: PayloadAction<{ postId: number }>) => {
+            const index = state.posts.findIndex(p => p.id === action.payload.postId)
+            if (index !== -1) {
+                state.posts.splice(index, 1)
+            }
         }
     }
 })

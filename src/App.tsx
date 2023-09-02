@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import './App.css'
-import {Route, Routes} from 'react-router-dom'
+import {Navigate, Route, Routes} from 'react-router-dom'
 import Header from './components/Header/Header';
 import Navbar from './components/Navbar/Navbar';
 import Profile from './components/Profile/Profile';
@@ -35,6 +35,9 @@ const App = () => {
                     <Route path="/music" element={<Users/>}/>
                     <Route path="/settings" element={<Users/>}/>
                     <Route path="/login" element={<Login/>}/>
+                    <Route path={"/404"} element={<h1>404: PAGE NOT FOUND</h1>} />
+                    <Route path={"*"} element={<Navigate to={"/404"} />} />
+                    <Route path={"/socialNetwork"} element={<Navigate to={"/profile"} />} />
                 </Routes>
             </div>
         </div>
