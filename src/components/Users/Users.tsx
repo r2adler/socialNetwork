@@ -6,7 +6,7 @@ import {Paginator} from 'components/common/Paginator/Paginator';
 import {User} from 'components/Users/User/User';
 
 
-export const Users = () => {
+const Users = () => {
     const users = useSelector<AppRootStateType, UserType[]>(state => state.usersPage.users);
 
     return (
@@ -20,6 +20,6 @@ export const Users = () => {
         </div>
     );
 };
-
+export default Users
 
 
