@@ -1,4 +1,3 @@
-import {combineReducers} from 'redux';
 import {profileReducer} from './profile-reducer';
 import {dialogsReducer} from './dialogs-reducer';
 import {usersReducer} from './users-reducer';
@@ -8,15 +7,15 @@ import {TypedUseSelectorHook, useDispatch, useSelector} from 'react-redux';
 import {AnyAction, configureStore, ThunkDispatch} from '@reduxjs/toolkit';
 import {appReducer} from 'redux/app-reducer';
 
-const rootReducer = combineReducers({
-    profilePage: profileReducer,
-    dialogsPage: dialogsReducer,
-    usersPage: usersReducer,
-    auth: authReducer,
-    app: appReducer
-})
+
 export const store = configureStore({
-    reducer: rootReducer
+    reducer: {
+        profilePage: profileReducer,
+        dialogsPage: dialogsReducer,
+        usersPage: usersReducer,
+        auth: authReducer,
+        app: appReducer
+    }
 });
 
 export type AppRootStateType = ReturnType<typeof store.getState>;

@@ -17,7 +17,7 @@ export type UserType = {
 export type InitialStateType = {
     users: UserType[]
     pageSize: number
-    totalUsersCount: number
+    totalItemsCount: number
     currentPage: number
     isFetching: boolean
     followingInProgress: number[]
@@ -28,7 +28,7 @@ const slice = createSlice({
     initialState: {
         users: [],
         pageSize: 5,
-        totalUsersCount: 0,
+        totalItemsCount: 0,
         currentPage: 1,
         isFetching: false,
         followingInProgress: [],
@@ -53,7 +53,7 @@ const slice = createSlice({
             state.currentPage = action.payload.currentPage
         },
         setTotalUsersCount: (state, action: PayloadAction<{ totalCount: number }>) => {
-            state.totalUsersCount = action.payload.totalCount
+            state.totalItemsCount = action.payload.totalCount
         },
         setIsFetching: (state, action: PayloadAction<{ isFetching: boolean }>) => {
             state.isFetching = action.payload.isFetching
