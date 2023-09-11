@@ -1,6 +1,6 @@
 import React, {ChangeEvent, FC, useState} from 'react';
-import {useAppDispatch, useAppSelector} from '../../../redux/store';
-import {updateUserStatusTC} from '../../../redux/profile-reducer';
+import {useAppDispatch, useAppSelector} from 'redux/store';
+import { profileThunks} from 'redux/profile-reducer';
 
 
 export const ProfileStatus: FC = () => {
@@ -16,7 +16,7 @@ export const ProfileStatus: FC = () => {
     }
     const deactivateEditeMode = () => {
         setEditMode(false)
-        dispatch(updateUserStatusTC(tempStatus))
+        dispatch(profileThunks.updateUserStatus(tempStatus))
     }
     const onStatusChange = (e: ChangeEvent<HTMLInputElement>) => {
         setTempStatus(e.currentTarget.value)

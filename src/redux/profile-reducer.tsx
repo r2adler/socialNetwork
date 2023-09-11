@@ -34,29 +34,28 @@ const slice = createSlice({
             if (index !== -1) {
                 state.posts.splice(index, 1)
             }
+        },
+        savePhoto: (state, action: PayloadAction<photosItem>) => {
+            state.profile!.photos =  action.payload
         }
     }
 })
 
 
-export const profileReducer = slice.reducer
-export const profileActions = slice.actions
-
-
 // thunks
-export const getUserProfileTC = (userId: number): AppThunk => (dispatch: Dispatch<any>) => {
+export const getUserProfile = (userId: number): AppThunk => (dispatch: Dispatch<any>) => {
     usersAPI.getProfile(userId)
         .then(response => {
             dispatch(profileActions.setUserProfile({profile: response.data}))
         })
 }
-export const getUserStatusTC = (userId: number): AppThunk => (dispatch: Dispatch) => {
+export const getUserStatus = (userId: number): AppThunk => (dispatch: Dispatch) => {
     profileAPI.getStatus(userId)
         .then(response => {
             dispatch(profileActions.setUserStatus({status: response.data}))
         })
 }
-export const updateUserStatusTC = (status: string): AppThunk => (dispatch: Dispatch) => {
+export const updateUserStatus = (status: string): AppThunk => (dispatch: Dispatch) => {
     profileAPI.updateStatus(status)
         .then(response => {
             if (response.data.resultCode === 0) {
@@ -64,6 +63,17 @@ export const updateUserStatusTC = (status: string): AppThunk => (dispatch: Dispa
             }
         })
 }
+export const savePhoto = (file: File): AppThunk => async (dispatch: Dispatch) => {
+    const response = await profileAPI.savePhoto(file)
+    if (response.data.resultCode === 0) {
+        dispatch(profileActions.savePhoto(response.data.data.photos))
+    }
+}
+
+
+export const profileReducer = slice.reducer
+export const profileActions = slice.actions
+export const profileThunks = {savePhoto, updateUserStatus, getUserProfile, getUserStatus}
 
 
 // types

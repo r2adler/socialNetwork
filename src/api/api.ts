@@ -1,5 +1,5 @@
 import axios, {AxiosResponse} from 'axios';
-
+import {photosItem} from 'redux/profile-reducer';
 
 const instance = axios.create({
     withCredentials: true,
@@ -36,9 +36,14 @@ export const profileAPI = {
         return instance.get(`profile/status/${userId}`)
     },
     updateStatus(status: string) {
-        return instance.put<ResponseType, AxiosResponse<ResponseType>, { status: string }>('/profile/status', {status})
-    }
+        return instance.put<ResponseType>('/profile/status', {status})
+    },
+    savePhoto(photoFile: File) {
+        const formData = new FormData()
+        formData.append('image', photoFile)
 
+        return instance.put<ResponseType<{photos: photosItem}>, AxiosResponse<ResponseType<{photos: photosItem}>>,FormData >('profile/photo', formData, {headers: {'Content-Type': 'multipart/form-data'}})
+    }
 }
 
 export const authAPI = {
@@ -56,6 +61,9 @@ export const authAPI = {
         return instance.delete<ResponseType>('/auth/login')
     }
 }
+
+
+//types
 type LoginType = {
     email: string
     password: string
