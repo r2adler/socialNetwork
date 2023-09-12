@@ -2,6 +2,7 @@ import {profileAPI} from 'api/api';
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {createAppAsyncThunk} from 'utils/createAppAsyncThunk';
 
+
 const slice = createSlice({
     name: 'profile',
     initialState: {
