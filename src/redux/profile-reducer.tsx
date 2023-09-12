@@ -1,7 +1,6 @@
-import {AppThunk} from './store';
-import {Dispatch} from 'redux';
-import {profileAPI, usersAPI} from 'api/api';
+import {profileAPI} from 'api/api';
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {createAppAsyncThunk} from 'utils/createAppAsyncThunk';
 
 const slice = createSlice({
     name: 'profile',
@@ -23,53 +22,69 @@ const slice = createSlice({
             }
             state.posts.push(newPost)
         },
-        setUserProfile: (state, action: PayloadAction<{ profile: ProfileType | null }>) => {
-            state.profile = action.payload.profile
-        },
-        setUserStatus: (state, action: PayloadAction<{ status: string }>) => {
-            state.status = action.payload.status
-        },
         deletePost: (state, action: PayloadAction<{ postId: number }>) => {
             const index = state.posts.findIndex(p => p.id === action.payload.postId)
             if (index !== -1) {
                 state.posts.splice(index, 1)
             }
         },
-        savePhoto: (state, action: PayloadAction<photosItem>) => {
-            state.profile!.photos =  action.payload
-        }
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(getUserProfile.fulfilled, (state, action) => {
+                state.profile = action.payload.profile
+            })
+            .addCase(getUserStatus.fulfilled, (state, action) => {
+                state.status = action.payload.status
+            })
+            .addCase(updateUserStatus.fulfilled, (state, action) => {
+                state.status = action.payload.status
+            })
+            .addCase(savePhoto.fulfilled, (state, action) => {
+                state.profile!.photos = action.payload
+            })
     }
 })
 
 
 // thunks
-export const getUserProfile = (userId: number): AppThunk => (dispatch: Dispatch<any>) => {
-    usersAPI.getProfile(userId)
-        .then(response => {
-            dispatch(profileActions.setUserProfile({profile: response.data}))
-        })
-}
-export const getUserStatus = (userId: number): AppThunk => (dispatch: Dispatch) => {
-    profileAPI.getStatus(userId)
-        .then(response => {
-            dispatch(profileActions.setUserStatus({status: response.data}))
-        })
-}
-export const updateUserStatus = (status: string): AppThunk => (dispatch: Dispatch) => {
-    profileAPI.updateStatus(status)
-        .then(response => {
-            if (response.data.resultCode === 0) {
-                dispatch(profileActions.setUserStatus({status}))
-            }
-        })
-}
-export const savePhoto = (file: File): AppThunk => async (dispatch: Dispatch) => {
-    const response = await profileAPI.savePhoto(file)
-    if (response.data.resultCode === 0) {
-        dispatch(profileActions.savePhoto(response.data.data.photos))
-    }
-}
+const getUserProfile = createAppAsyncThunk<{ profile: ProfileType }, number>(
+    'profilePage/getUserProfile',
+    async (userId) => {
+        const res = await profileAPI.getProfile(userId)
+        return {profile: res.data}
+    })
 
+const getUserStatus = createAppAsyncThunk<{ status: string }, number>(
+    'profilePage/getUserStatus',
+    async (userId) => {
+        const res = await profileAPI.getStatus(userId)
+        return {status: res.data}
+    })
+const updateUserStatus = createAppAsyncThunk<{ status: string }, string>(
+    'profilePage/updateUserStatus',
+    async (status, thunkAPI) => {
+        const {rejectWithValue} = thunkAPI
+        const res = await profileAPI.updateStatus(status)
+        if (res.data.resultCode === 0) {
+            return {status}
+        } else {
+            return rejectWithValue(null)
+        }
+    })
+
+export const savePhoto = createAppAsyncThunk<photosItem, File>(
+    'profilePage/savePhoto',
+    async (file, thunkAPI) => {
+        const {rejectWithValue} = thunkAPI
+        const res = await profileAPI.savePhoto(file)
+        if (res.data.resultCode === 0) {
+            console.log(res.data.data.photos)
+            return res.data.data.photos
+        } else {
+            return rejectWithValue(null)
+        }
+    })
 
 export const profileReducer = slice.reducer
 export const profileActions = slice.actions

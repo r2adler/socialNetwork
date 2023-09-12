@@ -21,10 +21,6 @@ export const usersAPI = {
     },
     unfollow(userId: number) {
         return instance.delete(`follow/${userId}`)
-    },
-    getProfile(userId: number) {
-        console.log('Obsolete method. Please use profileAPI')
-        return profileAPI.getProfile(userId)
     }
 }
 
@@ -42,7 +38,7 @@ export const profileAPI = {
         const formData = new FormData()
         formData.append('image', photoFile)
 
-        return instance.put<ResponseType<{photos: photosItem}>, AxiosResponse<ResponseType<{photos: photosItem}>>,FormData >('profile/photo', formData, {headers: {'Content-Type': 'multipart/form-data'}})
+        return instance.put<ResponseType<{ photos: photosItem }>, AxiosResponse<ResponseType<{ photos: photosItem }>>, FormData>('profile/photo', formData, {headers: {'Content-Type': 'multipart/form-data'}})
     }
 }
 

@@ -28,6 +28,6 @@ export default store
 
 
 export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, AppRootStateType, unknown, AnyAction>
-type AppDispatchType = ThunkDispatch<AppRootStateType, any, AnyAction>
+export type AppDispatchType = ThunkDispatch<AppRootStateType, any, AnyAction>
 export const useAppSelector: TypedUseSelectorHook<AppRootStateType> = useSelector
 export const useAppDispatch = () => useDispatch<AppDispatchType>()
