@@ -1,5 +1,5 @@
 import axios, {AxiosResponse} from 'axios';
-import {photosItem} from 'redux/profile-reducer';
+import {photosItem, ProfileType} from 'redux/profile-reducer';
 
 const instance = axios.create({
     withCredentials: true,
@@ -39,6 +39,9 @@ export const profileAPI = {
         formData.append('image', photoFile)
 
         return instance.put<ResponseType<{ photos: photosItem }>, AxiosResponse<ResponseType<{ photos: photosItem }>>, FormData>('profile/photo', formData, {headers: {'Content-Type': 'multipart/form-data'}})
+    },
+    saveProfile(profile: Partial<ProfileType>) {
+        return instance.put<ResponseType, AxiosResponse<ResponseType>, Partial<ProfileType>>('profile', profile)
     }
 }
 

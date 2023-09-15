@@ -55,7 +55,6 @@ const getUserProfile = createAppAsyncThunk<{ profile: ProfileType }, number>(
         const res = await profileAPI.getProfile(userId)
         return {profile: res.data}
     })
-
 const getUserStatus = createAppAsyncThunk<{ status: string }, number>(
     'profilePage/getUserStatus',
     async (userId) => {
@@ -73,8 +72,7 @@ const updateUserStatus = createAppAsyncThunk<{ status: string }, string>(
             return rejectWithValue(null)
         }
     })
-
-export const savePhoto = createAppAsyncThunk<photosItem, File>(
+const savePhoto = createAppAsyncThunk<photosItem, File>(
     'profilePage/savePhoto',
     async (file, thunkAPI) => {
         const {rejectWithValue} = thunkAPI
@@ -87,9 +85,22 @@ export const savePhoto = createAppAsyncThunk<photosItem, File>(
         }
     })
 
+const saveProfile = createAppAsyncThunk<any, Partial<ProfileType>>(
+    'profilePage/saveProfile',
+    async (profile, thunkAPI) => {
+        const {dispatch, getState, rejectWithValue} = thunkAPI
+        const userId: any = getState().auth.userId
+        const res = await profileAPI.saveProfile(profile)
+        if (res.data.resultCode === 0) {
+            dispatch(profileThunks.getUserProfile(userId))
+        } else {
+            return rejectWithValue(null)
+        }
+    })
+
 export const profileReducer = slice.reducer
 export const profileActions = slice.actions
-export const profileThunks = {savePhoto, updateUserStatus, getUserProfile, getUserStatus}
+export const profileThunks = {savePhoto, updateUserStatus, getUserProfile, getUserStatus, saveProfile}
 
 
 // types
