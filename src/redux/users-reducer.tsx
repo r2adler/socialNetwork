@@ -1,7 +1,8 @@
-import {usersAPI} from 'api/api';
 import {Dispatch} from 'redux';
 import {AppThunk} from './store';
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {usersAPI} from 'api/usersAPI';
+import {createAppAsyncThunk} from 'utils/createAppAsyncThunk';
 
 export type UserType = {
     name: string
@@ -68,16 +69,18 @@ const slice = createSlice({
 
 
 //thunks
-export const requestUsersTC = (page: number, pageSize: number): AppThunk => (dispatch: Dispatch<any>) => {
-    dispatch(usersActions.setIsFetching({isFetching: true}))
-    dispatch(usersActions.setCurrentPage({currentPage: page}))
-    usersAPI.getUsers(page, pageSize)
-        .then(data => {
-            dispatch(usersActions.setIsFetching({isFetching: false}))
-            dispatch(usersActions.setUsers({users: data.items}))
-            dispatch(usersActions.setTotalUsersCount({totalCount: data.totalCount}))
-        })
-}
+export const requestUsers = createAppAsyncThunk<void, { page: number, pageSize: number }>('users/requestUsersTC',
+    async (arg, thunkAPI) => {
+        const {dispatch, rejectWithValue} = thunkAPI
+        dispatch(usersActions.setIsFetching({isFetching: true}))
+        dispatch(usersActions.setCurrentPage({currentPage: arg.page}))
+        usersAPI.getUsers(arg.page, arg.pageSize)
+            .then(data => {
+                dispatch(usersActions.setIsFetching({isFetching: false}))
+                dispatch(usersActions.setUsers({users: data.items}))
+                dispatch(usersActions.setTotalUsersCount({totalCount: data.totalCount}))
+            })
+    })
 
 export const onPageChangeTC = (pageNumber: number, pageSize: number): AppThunk => (dispatch: Dispatch<any>) => {
     dispatch(usersActions.setCurrentPage({currentPage: pageNumber}))
@@ -133,3 +136,4 @@ const followUnfollowFlow = async (dispatch: Dispatch, userId: number, apiMethod:
 
 export const usersReducer = slice.reducer
 export const usersActions = slice.actions
+export const usersThunks = {requestUsers}

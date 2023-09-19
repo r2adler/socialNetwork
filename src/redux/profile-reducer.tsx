@@ -1,6 +1,6 @@
-import {profileAPI} from 'api/api';
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {createAppAsyncThunk} from 'utils/createAppAsyncThunk';
+import {profileAPI} from 'api/profileAPI';
 
 
 const slice = createSlice({
@@ -85,7 +85,7 @@ const savePhoto = createAppAsyncThunk<photosItem, File>(
         }
     })
 
-const saveProfile = createAppAsyncThunk<any, Partial<ProfileType>>(
+const saveProfile = createAppAsyncThunk<void, Partial<ProfileType>>(
     'profilePage/saveProfile',
     async (profile, thunkAPI) => {
         const {dispatch, getState, rejectWithValue} = thunkAPI

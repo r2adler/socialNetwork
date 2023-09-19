@@ -4,9 +4,9 @@ import {Navigate, Route, Routes} from 'react-router-dom'
 import Header from './components/Header/Header';
 import Navbar from './components/Navbar/Navbar';
 import Profile from './components/Profile/Profile';
-import {Login} from 'components/Login/Login';
+import {Login} from 'components/login/Login';
 import {useAppDispatch, useAppSelector} from 'redux/store';
-import {initializeTC} from 'redux/app-reducer';
+import {appThunks} from 'redux/app-reducer';
 import {Preloader} from 'components/common/Preloader/Preloader';
 import {withSuspense} from 'components/hoc/withSuspense';
 
@@ -20,7 +20,7 @@ const App = () => {
     const initialized = useAppSelector<boolean>(state => state.app.initialized)
 
     useEffect(() => {
-        dispatch(initializeTC())
+        dispatch(appThunks.initialize())
     }, [])
 
     if (!initialized) {

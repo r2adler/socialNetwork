@@ -1,7 +1,7 @@
 import styles from './Paginator.module.css'
 import {useSelector} from 'react-redux';
 import {AppRootStateType, useAppDispatch} from 'redux/store';
-import {onPageChangeTC, requestUsersTC} from 'redux/users-reducer';
+import {onPageChangeTC, usersThunks} from 'redux/users-reducer';
 import {useEffect, useState} from 'react';
 
 
@@ -23,7 +23,7 @@ export const Paginator = () => {
     }
 
     useEffect(() => {
-        dispatch(requestUsersTC(currentPage, pageSize))
+        dispatch(usersThunks.requestUsers({page: currentPage, pageSize}))
     }, []);
 
     const portionCount = Math.ceil(pagesCount / portionSize)
