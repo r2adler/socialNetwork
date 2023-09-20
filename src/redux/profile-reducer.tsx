@@ -78,7 +78,6 @@ const savePhoto = createAppAsyncThunk<photosItem, File>(
         const {rejectWithValue} = thunkAPI
         const res = await profileAPI.savePhoto(file)
         if (res.data.resultCode === 0) {
-            console.log(res.data.data.photos)
             return res.data.data.photos
         } else {
             return rejectWithValue(null)

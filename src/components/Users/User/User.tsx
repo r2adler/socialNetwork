@@ -1,10 +1,11 @@
 import React, {FC} from 'react';
 import userPhoto from 'assets/images/user.png';
-import {followTC, unfollowTC, UserType} from 'redux/users-reducer';
+import {usersThunks} from 'redux/users-reducer';
 import {NavLink} from 'react-router-dom';
 import {useSelector} from 'react-redux';
 import {AppRootStateType, useAppDispatch} from 'redux/store';
 import styles from './User.module.css'
+import {UserType} from 'api/usersAPI';
 
 
 export const User: FC<UserPropsType> = ({user}) => {
@@ -27,14 +28,14 @@ export const User: FC<UserPropsType> = ({user}) => {
                     {user.followed ?
                         <button
                             disabled={followingInProgress.some(id => id === user.id)}
-                            onClick={() => dispatch(unfollowTC(user.id))}
+                            onClick={() => dispatch(usersThunks.unfollow({userId: user.id}))}
                         >
                             Unfollow
                         </button>
                         :
                         <button
                             disabled={followingInProgress.some(id => id === user.id)}
-                            onClick={() => dispatch(followTC(user.id))}
+                            onClick={() => dispatch(usersThunks.follow({userId: user.id}))}
                         >
                             Follow
                         </button>

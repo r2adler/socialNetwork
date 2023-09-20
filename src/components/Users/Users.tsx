@@ -1,9 +1,9 @@
 import React from 'react';
 import {useSelector} from 'react-redux';
-import {UserType} from 'redux/users-reducer';
 import {AppRootStateType} from 'redux/store';
 import {Paginator} from 'components/common/Paginator/Paginator';
 import {User} from 'components/Users/User/User';
+import {UserType} from 'api/usersAPI';
 
 
 const Users = () => {
@@ -14,7 +14,7 @@ const Users = () => {
             <Paginator/>
             <div>
                 {
-                    users.map(user => <User user={user}/>)
+                    users.map(user => <User key={user.id} user={user}/>)
                 }
             </div>
         </div>

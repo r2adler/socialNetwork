@@ -1,28 +1,8 @@
 import {Dispatch} from 'redux';
-import {AppThunk} from './store';
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {usersAPI} from 'api/usersAPI';
+import {UserType, usersAPI} from 'api/usersAPI';
 import {createAppAsyncThunk} from 'utils/createAppAsyncThunk';
 
-export type UserType = {
-    name: string
-    id: number
-    uniqueUrlName: any
-    photos: {
-        small: any
-        large: any
-    }
-    status: string
-    followed: boolean
-}
-export type InitialStateType = {
-    users: UserType[]
-    pageSize: number
-    totalItemsCount: number
-    currentPage: number
-    isFetching: boolean
-    followingInProgress: number[]
-}
 
 const slice = createSlice({
     name: 'users',
@@ -69,65 +49,46 @@ const slice = createSlice({
 
 
 //thunks
-export const requestUsers = createAppAsyncThunk<void, { page: number, pageSize: number }>('users/requestUsersTC',
+const requestUsers = createAppAsyncThunk<void, { page: number, pageSize: number }>('users/requestUsers',
     async (arg, thunkAPI) => {
         const {dispatch, rejectWithValue} = thunkAPI
         dispatch(usersActions.setIsFetching({isFetching: true}))
         dispatch(usersActions.setCurrentPage({currentPage: arg.page}))
-        usersAPI.getUsers(arg.page, arg.pageSize)
-            .then(data => {
-                dispatch(usersActions.setIsFetching({isFetching: false}))
-                dispatch(usersActions.setUsers({users: data.items}))
-                dispatch(usersActions.setTotalUsersCount({totalCount: data.totalCount}))
-            })
+        const res = await usersAPI.getUsers(arg.page, arg.pageSize)
+        dispatch(usersActions.setIsFetching({isFetching: false}))
+        dispatch(usersActions.setUsers({users: res.items}))
+        dispatch(usersActions.setTotalUsersCount({totalCount: res.totalCount}))
     })
 
-export const onPageChangeTC = (pageNumber: number, pageSize: number): AppThunk => (dispatch: Dispatch<any>) => {
-    dispatch(usersActions.setCurrentPage({currentPage: pageNumber}))
-    dispatch(usersActions.setIsFetching({isFetching: true}))
+const onPageChange = createAppAsyncThunk<void, { pageNumber: number, pageSize: number }>('users/onPageChange',
+    async (arg, thunkAPI) => {
+        const {dispatch, rejectWithValue} = thunkAPI
+        dispatch(usersActions.setCurrentPage({currentPage: arg.pageNumber}))
+        dispatch(usersActions.setIsFetching({isFetching: true}))
 
-    usersAPI.getUsers(pageNumber, pageSize)
-        .then(data => {
-            dispatch(usersActions.setUsers({users: data.items}))
-            dispatch(usersActions.setIsFetching({isFetching: false}))
-        })
-}
+        const res = await usersAPI.getUsers(arg.pageNumber, arg.pageSize)
+        console.log(res)
+        dispatch(usersActions.setUsers({users: res.items}))
+        dispatch(usersActions.setIsFetching({isFetching: false}))
+    })
 
-// export const followTC = (userId: number): AppThunk => (dispatch: Dispatch<any>) => {
-//     dispatch(usersActions.toggleFollowingProgress({isFetching: true, userId}))
-//     usersAPI.follow(userId)
-//         .then(response => {
-//             if (response.data.resultCode === 0) {
-//                 dispatch(usersActions.followSuccess({userId}))
-//             }
-//             dispatch(usersActions.toggleFollowingProgress({isFetching: false, userId}))
-//         })
-// }
-//
-// export const unfollowTC = (userId: number): AppThunk => (dispatch: Dispatch<any>) => {
-//     dispatch(usersActions.toggleFollowingProgress({isFetching: true, userId}))
-//     usersAPI.unfollow(userId)
-//         .then(response => {
-//             if (response.data.resultCode === 0) {
-//                 dispatch(usersActions.unfollowSuccess({userId}))
-//             }
-//             dispatch(usersActions.toggleFollowingProgress({isFetching: false, userId}))
-//         })
-// }
+export const follow = createAppAsyncThunk<void, { userId: number }>('users/follow',
+    async (arg, thunkAPI) => {
+        const {dispatch, rejectWithValue} = thunkAPI
+        followUnfollowFlow(dispatch, arg.userId, usersAPI.follow, usersActions.followSuccess)
+    })
 
+export const unfollow = createAppAsyncThunk<void, { userId: number }>('users/unfollow',
+    async (arg, thunkAPI) => {
+        const {dispatch, rejectWithValue} = thunkAPI
+        followUnfollowFlow(dispatch, arg.userId, usersAPI.unfollow, usersActions.unfollowSuccess)
+    })
 
-export const followTC = (userId: number): AppThunk => (dispatch: Dispatch) => {
-    followUnfollowFlow(dispatch, userId, usersAPI.follow, usersActions.followSuccess)
-}
-
-export const unfollowTC = (userId: number): AppThunk => (dispatch: Dispatch) => {
-    followUnfollowFlow(dispatch, userId, usersAPI.unfollow, usersActions.unfollowSuccess)
-}
-
-const followUnfollowFlow = async (dispatch: Dispatch, userId: number, apiMethod: (userId: number) => any, AC: (payload: { userId: number }) => any) => {
+const followUnfollowFlow = async (dispatch: Dispatch, userId: number, apiMethod: (userId: number) => Promise<any>, AC: (payload: { userId: number }) => any) => {
     dispatch(usersActions.toggleFollowingProgress({isFetching: true, userId}))
-    const response = await apiMethod(userId)
-    if (response.data.resultCode === 0) {
+    const res = await apiMethod(userId)
+    console.log(res)
+    if (res.data.resultCode === 0) {
         dispatch(AC({userId}))
     }
     dispatch(usersActions.toggleFollowingProgress({isFetching: false, userId}))
@@ -136,4 +97,15 @@ const followUnfollowFlow = async (dispatch: Dispatch, userId: number, apiMethod:
 
 export const usersReducer = slice.reducer
 export const usersActions = slice.actions
-export const usersThunks = {requestUsers}
+export const usersThunks = {requestUsers, onPageChange, follow, unfollow}
+
+
+//types
+export type InitialStateType = {
+    users: UserType[]
+    pageSize: number
+    totalItemsCount: number
+    currentPage: number
+    isFetching: boolean
+    followingInProgress: number[]
+}

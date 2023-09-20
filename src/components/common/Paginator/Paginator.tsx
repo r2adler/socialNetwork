@@ -1,7 +1,7 @@
 import styles from './Paginator.module.css'
 import {useSelector} from 'react-redux';
 import {AppRootStateType, useAppDispatch} from 'redux/store';
-import {onPageChangeTC, usersThunks} from 'redux/users-reducer';
+import {usersThunks} from 'redux/users-reducer';
 import {useEffect, useState} from 'react';
 
 
@@ -19,7 +19,7 @@ export const Paginator = () => {
     }
 
     const onPageChanged = (pageNumber: number) => {
-        dispatch(onPageChangeTC(pageNumber, pageSize))
+        dispatch(usersThunks.onPageChange({pageNumber, pageSize}))
     }
 
     useEffect(() => {
