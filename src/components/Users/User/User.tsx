@@ -1,6 +1,6 @@
 import React, {FC} from 'react';
 import userPhoto from 'assets/images/user.png';
-import {usersThunks} from 'redux/users-reducer';
+import {usersThunks} from 'redux/users_reducer/users-reducer';
 import {NavLink} from 'react-router-dom';
 import {useSelector} from 'react-redux';
 import {AppRootStateType, useAppDispatch} from 'redux/store';

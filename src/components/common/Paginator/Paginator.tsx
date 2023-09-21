@@ -1,7 +1,7 @@
 import styles from './Paginator.module.css'
 import {useSelector} from 'react-redux';
 import {AppRootStateType, useAppDispatch} from 'redux/store';
-import {usersThunks} from 'redux/users-reducer';
+import {usersThunks} from 'redux/users_reducer/users-reducer';
 import {useEffect, useState} from 'react';
 
 

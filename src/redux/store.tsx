@@ -1,6 +1,6 @@
 import {profileReducer} from './profile-reducer';
 import {dialogsReducer} from './dialogs-reducer';
-import {usersReducer} from './users-reducer';
+import {usersReducer} from 'redux/users_reducer/users-reducer';
 import {authReducer} from './auth-reducer';
 import {ThunkAction} from 'redux-thunk';
 import {TypedUseSelectorHook, useDispatch, useSelector} from 'react-redux';
