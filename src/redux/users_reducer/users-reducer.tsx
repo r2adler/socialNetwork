@@ -14,6 +14,7 @@ const slice = createSlice({
         currentPage: 1,
         isFetching: false,
         followingInProgress: [],
+        filter: {term: '', friend: null}
     } as UsersStateType,
     reducers: {
         followSuccess: (state, action: PayloadAction<{ userId: number }>) => {
@@ -44,31 +45,25 @@ const slice = createSlice({
             state.followingInProgress = action.payload.isFetching ?
                 [...state.followingInProgress, action.payload.userId] :
                 state.followingInProgress.filter(id => id !== action.payload.userId)
+        },
+        setFilter: (state, action: PayloadAction<{ filter: FilterType }>) => {
+            state.filter = action.payload.filter
         }
     }
 })
 
 
 //thunks
-const requestUsers = createAppAsyncThunk<void, { page: number, pageSize: number }>('users/requestUsers',
+const getUsers = createAppAsyncThunk<void, { page: number, pageSize: number, filter: FilterType }>('users/requestUsers',
     async (arg, thunkAPI) => {
         const {dispatch, rejectWithValue} = thunkAPI
         dispatch(usersActions.setIsFetching({isFetching: true}))
         dispatch(usersActions.setCurrentPage({currentPage: arg.page}))
-        const data = await usersAPI.getUsers(arg.page, arg.pageSize)
+        dispatch(usersActions.setFilter({filter: arg.filter}))
+        const res = await usersAPI.getUsers(arg.page, arg.pageSize, arg.filter.term, arg.filter.friend)
         dispatch(usersActions.setIsFetching({isFetching: false}))
-        dispatch(usersActions.setUsers({users: data.items}))
-        dispatch(usersActions.setTotalUsersCount({totalCount: data.totalCount}))
-    })
-
-const onPageChange = createAppAsyncThunk<void, { pageNumber: number, pageSize: number }>('users/onPageChange',
-    async (arg, thunkAPI) => {
-        const {dispatch, rejectWithValue} = thunkAPI
-        dispatch(usersActions.setCurrentPage({currentPage: arg.pageNumber}))
-        dispatch(usersActions.setIsFetching({isFetching: true}))
-        const res = await usersAPI.getUsers(arg.pageNumber, arg.pageSize)
         dispatch(usersActions.setUsers({users: res.items}))
-        dispatch(usersActions.setIsFetching({isFetching: false}))
+        dispatch(usersActions.setTotalUsersCount({totalCount: res.totalCount}))
     })
 
 export const follow = createAppAsyncThunk<void, { userId: number }>('users/follow',
@@ -95,7 +90,7 @@ const followUnfollowFlow = async (dispatch: Dispatch, userId: number, apiMethod:
 
 export const usersReducer = slice.reducer
 export const usersActions = slice.actions
-export const usersThunks = {requestUsers, onPageChange, follow, unfollow}
+export const usersThunks = { getUsers, follow, unfollow}
 
 
 //types
@@ -106,4 +101,9 @@ export type UsersStateType = {
     currentPage: number
     isFetching: boolean
     followingInProgress: number[]
+    filter: FilterType
+}
+export type FilterType = {
+    term: string
+    friend: boolean | null
 }

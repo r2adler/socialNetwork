@@ -12,7 +12,7 @@ import {withSuspense} from 'components/hoc/withSuspense';
 
 
 const Dialogs = React.lazy(() => import('./components/Dialogs/Dialogs'))
-const Users = React.lazy(() => import('./components/Users/Users'))
+const Users = React.lazy(() => import('components/Users/users'))
 
 
 const App = () => {

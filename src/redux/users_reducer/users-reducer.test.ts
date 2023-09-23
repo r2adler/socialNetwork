@@ -33,6 +33,7 @@ beforeEach(() => {
         currentPage: 1,
         isFetching: false,
         followingInProgress: [1, 3],
+        filter: {term: '', friend: null}
     }
 })
 test('follow success', () => {

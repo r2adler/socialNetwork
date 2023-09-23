@@ -16,7 +16,7 @@ export const store = configureStore({
         auth: authReducer,
         app: appReducer
     }
-});
+})
 
 export type AppRootStateType = ReturnType<typeof store.getState>;
 

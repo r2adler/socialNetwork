@@ -3,9 +3,11 @@ import {AxiosResponse} from 'axios';
 import {ResponseType} from 'api/api';
 
 export const usersAPI = {
-    getUsers(currentPage: number, pageSize: number) {
-        return instance.get<UsersResponse, AxiosResponse<UsersResponse>, UsersGetArgs>(`users?page=${currentPage}&count=${pageSize}`)
-            .then(res => res.data) as Promise<UsersResponse>
+    getUsers(currentPage: number, pageSize: number, term: string, friend: boolean | null) {
+
+        return instance.get<UsersResponse, AxiosResponse<UsersResponse>, { currentPage: number, pageSize: number }>(`users?page=${currentPage}&count=${pageSize}&term=${term}` +
+            (friend === null ? '' : `&friend=${friend}`))
+            .then(res => res.data)
     },
     follow(userId: number) {
         return instance.post<ResponseType, AxiosResponse<ResponseType>, { userId: number }>(`follow/${userId}`)

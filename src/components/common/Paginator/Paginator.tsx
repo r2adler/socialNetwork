@@ -1,16 +1,22 @@
 import styles from './Paginator.module.css'
-import {useSelector} from 'react-redux';
-import {AppRootStateType, useAppDispatch} from 'redux/store';
+import { useAppDispatch, useAppSelector} from 'redux/store';
 import {usersThunks} from 'redux/users_reducer/users-reducer';
-import {useEffect, useState} from 'react';
+import {FC, memo, useEffect, useState} from 'react';
+import {getCurrentPage, getFilter, getPageSize, getTotalItemsCount} from 'redux/users_reducer/users_selectors';
 
 
-export const Paginator = () => {
+export const Paginator: FC = memo(() => {
     const dispatch = useAppDispatch()
-    const currentPage = useSelector<AppRootStateType, number>(state => state.usersPage.currentPage)
-    const totalItemsCount = useSelector<AppRootStateType, number>(state => state.usersPage.totalItemsCount)
-    const pageSize = useSelector<AppRootStateType, number>(state => state.usersPage.pageSize);
+    const state = useAppSelector(state => state)
+    const currentPage = getCurrentPage(state)
+    const totalItemsCount = getTotalItemsCount(state)
+    const pageSize = getPageSize(state)
+    const filter = getFilter(state)
     const portionSize = 10
+
+    useEffect(() => {
+        dispatch(usersThunks.getUsers({page: currentPage, pageSize, filter}))
+    }, []);
 
     let pagesCount = Math.ceil(totalItemsCount / pageSize)
     let pages = []
@@ -18,14 +24,9 @@ export const Paginator = () => {
         pages.push(i)
     }
 
-    const onPageChanged = (pageNumber: number) => {
-        dispatch(usersThunks.onPageChange({pageNumber, pageSize}))
+    const onPageChanged = (page: number) => {
+        dispatch(usersThunks.getUsers({page, pageSize, filter}))
     }
-
-    useEffect(() => {
-        dispatch(usersThunks.requestUsers({page: currentPage, pageSize}))
-    }, []);
-
     const portionCount = Math.ceil(pagesCount / portionSize)
     const [portionNumber, setPortionNumber] = useState<number>(1)
     const leftPortionPageNumber = (portionNumber - 1) * portionSize + 1
@@ -54,5 +55,5 @@ export const Paginator = () => {
                 <button onClick={() => setPortionNumber(portionNumber + 1)}>NEXT</button>
             }
         </div>
-    );
-};
+    )
+})
